@@ -6,6 +6,7 @@ using System.IO.Compression;
 using System.IO;
 using System.Text;
 using Microsoft.SqlServer.Server;
+using static System.Net.Mime.MediaTypeNames;
 
 public partial class UserDefinedFunctions
 {
@@ -18,8 +19,10 @@ public partial class UserDefinedFunctions
         string str;
         SqlInt64 seqVal = 0;
 
-        str = "SELECT Next Value for " + (string)SchemaName  + "." + (string)SeqName; ;
-
+        //str = "SELECT Next Value for " + (string)SchemaName  + "." + (string)SeqName; 
+        //SELECT CAST(Next Value for dbo.seq_Teste AS BIGINT) AS SeqVal ;
+        str = "SELECT CAST(Next Value for " + (string)SchemaName + "." + (string)SeqName + " AS BIGINT) AS SeqVal";  // 결과값은 무조건 BIGINT로
+        
         using (SqlConnection sqlCnn = new SqlConnection("context connection=true"))
         {
             sqlCnn.Open();
@@ -28,7 +31,8 @@ public partial class UserDefinedFunctions
 
             while (reader.Read())
             {
-                seqVal = reader.GetInt32(0);
+                //seqVal = reader.GetInt32(0);
+                seqVal = reader.GetInt64(0);
             }
 
         }
